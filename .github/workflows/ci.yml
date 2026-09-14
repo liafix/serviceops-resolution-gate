@@ -1,0 +1,50 @@
+name: P0 Foundation CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22.16.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+
+      - name: Hydrate complete npm lockfile (P0 bootstrap only)
+        run: npm install --package-lock-only --ignore-scripts
+
+      - name: Install dependencies from hydrated lockfile
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      - name: P0 freeze verification
+        run: npm run verify:p0
+
+      - name: Upload hydrated package-lock for P0 repository hardening
+        uses: actions/upload-artifact@v4
+        with:
+          name: p0-hydrated-package-lock
+          path: package-lock.json
+          if-no-files-found: error
