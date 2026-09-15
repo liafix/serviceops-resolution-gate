@@ -30,10 +30,7 @@ jobs:
           node --version
           npm --version
 
-      - name: Hydrate complete npm lockfile (P0 bootstrap only)
-        run: npm install --package-lock-only --ignore-scripts
-
-      - name: Install dependencies from hydrated lockfile
+      - name: Install dependencies from committed lockfile
         run: npm ci
 
       - name: Lint
@@ -50,10 +47,3 @@ jobs:
 
       - name: P0 freeze verification
         run: npm run verify:p0
-
-      - name: Upload hydrated package-lock for P0 repository hardening
-        uses: actions/upload-artifact@v4
-        with:
-          name: p0-hydrated-package-lock
-          path: package-lock.json
-          if-no-files-found: error
