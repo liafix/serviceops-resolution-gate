@@ -2,7 +2,7 @@
 
 type Route = 'L1 resolve' | 'L2/L3 escalate' | 'Field dispatch';
 
-type Scenario = {
+interface Scenario {
   id: string;
   title: string;
   location: string;
@@ -13,9 +13,9 @@ type Scenario = {
   evidence: readonly string[];
   recommendedRoute: Route;
   rationale: string;
-};
+}
 
-const scenarios: readonly Scenario[] = [
+const scenarios: readonly [Scenario, ...Scenario[]] = [
   {
     id: 'INC-1042',
     title: 'Validator intermittently offline',
@@ -95,7 +95,7 @@ function severityClass(severity: Scenario['severity']) {
 }
 
 export function App() {
-  const [selectedId, setSelectedId] = useState(scenarios[0].id);
+  const [selectedId, setSelectedId] = useState<string>(scenarios[0].id);
   const [decision, setDecision] = useState<Route | null>(null);
 
   const selected = useMemo(
@@ -116,7 +116,7 @@ export function App() {
         </div>
         <div className="hero-badge">
           <span>Recruiter preview</span>
-          <strong>React Â· TypeScript Â· Vite</strong>
+          <strong>React | TypeScript | Vite</strong>
         </div>
       </header>
 
@@ -126,10 +126,22 @@ export function App() {
       </section>
 
       <section className="kpi-grid" aria-label="Preview metrics">
-        <article><span>Open synthetic cases</span><strong>4</strong></article>
-        <article><span>Decision routes</span><strong>3</strong></article>
-        <article><span>Evidence coverage</span><strong>100%</strong></article>
-        <article><span>Unverified actions</span><strong>0</strong></article>
+        <article>
+          <span>Open synthetic cases</span>
+          <strong>4</strong>
+        </article>
+        <article>
+          <span>Decision routes</span>
+          <strong>3</strong>
+        </article>
+        <article>
+          <span>Evidence coverage</span>
+          <strong>100%</strong>
+        </article>
+        <article>
+          <span>Unverified actions</span>
+          <strong>0</strong>
+        </article>
       </section>
 
       <section className="workspace">
@@ -159,7 +171,9 @@ export function App() {
                 </div>
                 <strong>{scenario.title}</strong>
                 <span>{scenario.location}</span>
-                <small>{scenario.source} Â· {scenario.signal}</small>
+                <small>
+                  {scenario.source} | {scenario.signal}
+                </small>
               </button>
             ))}
           </div>
@@ -189,7 +203,10 @@ export function App() {
               <h3>What is known</h3>
               <ul className="evidence-list">
                 {selected.evidence.map((item) => (
-                  <li key={item}><span aria-hidden="true">âś“</span>{item}</li>
+                  <li key={item}>
+                    <span aria-hidden="true">âś“</span>
+                    {item}
+                  </li>
                 ))}
               </ul>
             </article>
@@ -203,8 +220,12 @@ export function App() {
                   <button
                     key={route}
                     type="button"
-                    className={decision === route ? 'route-button route-button-selected' : 'route-button'}
-                    onClick={() => setDecision(route)}
+                    className={
+                      decision === route ? 'route-button route-button-selected' : 'route-button'
+                    }
+                    onClick={() => {
+                      setDecision(route);
+                    }}
                   >
                     {route}
                   </button>
@@ -218,7 +239,9 @@ export function App() {
               <p className="eyebrow">Human decision</p>
               <strong>{decision ?? 'No route selected yet'}</strong>
             </div>
-            <span>Recommended: <strong>{selected.recommendedRoute}</strong></span>
+            <span>
+              Recommended: <strong>{selected.recommendedRoute}</strong>
+            </span>
           </div>
         </section>
       </section>
@@ -243,7 +266,7 @@ export function App() {
       </section>
 
       <footer>
-        <span>DuĹˇan Cabala Â· Candidate project Â· 2026</span>
+        <span>DuĹˇan Cabala | Candidate project | 2026</span>
         <a href="https://github.com/liafix/serviceops-resolution-gate">View source on GitHub</a>
       </footer>
     </main>
